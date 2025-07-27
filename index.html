@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Ratana - Network Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Vanta.js Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber-blue': '#00d4ff',
+                        'cyber-purple': '#8b5cf6',
+                        'dark-bg': '#0f172a',
+                        'card-bg': 'rgba(30, 41, 59, 0.5)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'fade-in': 'fadeIn 1s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(100px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .typing-animation {
+            border-right: 2px solid #00d4ff;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #00d4ff; }
+        }
+        
+        .progress-bar {
+            transition: width 2s ease-in-out;
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .packet {
+            width: 10px;
+            height: 10px;
+            background: #00d4ff;
+            border-radius: 50%;
+            animation: packet-flow 2s ease-in-out infinite;
+        }
+        
+        @keyframes packet-flow {
+            0% { transform: translateX(-50px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(50px); opacity: 0; }
+        }
+
+        /* Vanta.js container styles */
+        .vanta-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Ensure text is readable over Vanta backgrounds */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-white font-sans overflow-x-hidden">
+    <!-- Preloader -->
+    <div id="preloader" class="preloader">
+        <div class="flex items-center space-x-4">
+            <div class="packet"></div>
+            <div class="packet" style="animation-delay: 0.2s;"></div>
+            <div class="packet" style="animation-delay: 0.4s;"></div>
+            <div class="text-cyber-blue ml-4">Loading Network...</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-bold text-cyber-blue">SR</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link hover:text-cyber-blue transition-colors duration-300">Home</a>
+                    <a href="#about" class="nav-link hover:text-cyber-blue transition-colors duration-300">About</a>
+                    <a href="#skills" class="nav-link hover:text-cyber-blue transition-colors duration-300">Skills</a>
+                    <a href="#projects" class="nav-link hover:text-cyber-blue transition-colors duration-300">Projects</a>
+                    <a href="#contact" class="nav-link hover:text-cyber-blue transition-colors duration-300">Contact</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full bg-dark-bg z-40 transform -translate-x-full transition-transform duration-300 md:hidden">
+        <div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl">
+            <a href="#home" class="mobile-nav-link hover:text-cyber-blue transition-colors duration-300">Home</a>
+            <a href="#about" class="mobile-nav-link hover:text-cyber-blue transition-colors duration-300">About</a>
+            <a href="#skills" class="mobile-nav-link hover:text-cyber-blue transition-colors duration-300">Skills</a>
+            <a href="#projects" class="mobile-nav-link hover:text-cyber-blue transition-colors duration-300">Projects</a>
+            <a href="#contact" class="mobile-nav-link hover:text-cyber-blue transition-colors duration-300">Contact</a>
+        </div>
+    </div>
+
+    <!-- Hero Section with Vanta.js NET Background -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <!-- Vanta.js Background -->
+        <div id="vanta-hero" class="vanta-bg"></div>
+        
+        <div class="text-center content-overlay px-6 hero-content">
+            <div class="mb-8">
+                <h1 class="text-6xl md:text-8xl font-bold mb-4 animate-fade-in">
+                    San <span class="text-cyber-blue">Ratana</span>
+                </h1>
+                <div class="text-2xl md:text-3xl text-slate-300 mb-6 h-12">
+                    <span id="typing-text" class="typing-animation"></span>
+                </div>
+                <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto animate-slide-up">
+                    Designing secure and scalable networks for the future of connectivity.
+                </p>
+            </div>
+            
+            <div class="flex justify-center space-x-6 animate-slide-up" style="animation-delay: 0.5s;">
+                <a href="#contact" class="bg-cyber-blue text-dark-bg px-8 py-3 rounded-lg font-semibold hover:bg-opacity-80 transition-all duration-300 hover-glow">
+                    Get In Touch
+                </a>
+                <a href="#projects" class="border border-cyber-blue text-cyber-blue px-8 py-3 rounded-lg font-semibold hover:bg-cyber-blue hover:text-dark-bg transition-all duration-300">
+                    View Projects
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-6 relative">
+        <!-- Vanta.js Background for About Section -->
+        <div id="vanta-about" class="vanta-bg opacity-30"></div>
+        
+        <div class="container mx-auto max-w-6xl content-overlay">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+                About <span class="text-cyber-blue">Me</span>
+            </h2>
+            
+            <div class="grid lg:grid-cols-5 gap-12 items-start">
+                <!-- Left Side - Profile Image and Quick Info -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Profile Image -->
+                    <div class="relative group">
+                        <div class="glass rounded-2xl p-6 hover-glow">
+                            <div class="relative mx-auto w-64 h-64 mb-6">
+                                <img src="/placeholder.svg?height=256&width=256" 
+                                     alt="San Ratana - Network Engineer" 
+                                     class="w-full h-full object-cover rounded-xl border-2 border-cyber-blue shadow-lg">
+                                <div class="absolute inset-0 rounded-xl bg-gradient-to-t from-cyber-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <!-- Status Indicator -->
+                                <div class="absolute bottom-4 right-4 flex items-center space-x-2 bg-dark-bg/80 backdrop-blur-sm rounded-full px-3 py-1">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span class="text-sm text-green-400">Available</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Stats -->
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div class="bg-slate-800/50 rounded-lg p-3">
+                                    <div class="text-2xl font-bold text-cyber-blue">5+</div>
+                                    <div class="text-sm text-slate-400">Years Experience</div>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-3">
+                                    <div class="text-2xl font-bold text-cyber-blue">50+</div>
+                                    <div class="text-sm text-slate-400">Projects Completed</div>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-3">
+                                    <div class="text-2xl font-bold text-cyber-blue">15+</div>
+                                    <div class="text-sm text-slate-400">Certifications</div>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-3">
+                                    <div class="text-2xl font-bold text-cyber-blue">24/7</div>
+                                    <div class="text-sm text-slate-400">Network Uptime</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certifications Card -->
+                    <div class="glass rounded-2xl p-6 hover-glow">
+                        <h3 class="text-xl font-bold mb-4 text-cyber-blue flex items-center">
+                            <i class="fas fa-certificate mr-2"></i>
+                            Certifications
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-network-wired text-cyber-blue"></i>
+                                    <span class="font-medium">CCNA</span>
+                                </div>
+                                <span class="text-green-400 text-sm">Active</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-shield-alt text-cyber-blue"></i>
+                                    <span class="font-medium">Network+</span>
+                                </div>
+                                <span class="text-green-400 text-sm">Active</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-lock text-cyber-blue"></i>
+                                    <span class="font-medium">Security+</span>
+                                </div>
+                                <span class="text-green-400 text-sm">Active</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-cloud text-cyber-blue"></i>
+                                    <span class="font-medium">AWS SAA</span>
+                                </div>
+                                <span class="text-green-400 text-sm">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Side - Personal Information -->
+                <div class="lg:col-span-3 space-y-6">
+                    <!-- Professional Summary -->
+                    <div class="glass rounded-2xl p-8 hover-glow">
+                        <h3 class="text-2xl font-bold mb-6 text-cyber-blue flex items-center">
+                            <i class="fas fa-user-tie mr-3"></i>
+                            Professional Summary
+                        </h3>
+                        <p class="text-lg text-slate-300 leading-relaxed mb-6">
+                            Passionate Network Engineer with 5+ years of experience in designing, implementing, and maintaining enterprise-level network infrastructure. I specialize in creating secure, scalable solutions that drive business success and ensure optimal network performance.
+                        </p>
+                        <p class="text-lg text-slate-300 leading-relaxed">
+                            My expertise spans across routing protocols, network security, cloud networking, and infrastructure automation. I'm committed to staying at the forefront of networking technology and continuously expanding my knowledge to deliver innovative solutions.
+                        </p>
+                    </div>
+
+                    <!-- Personal Details -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Contact Information -->
+                        <div class="glass rounded-2xl p-6 hover-glow">
+                            <h3 class="text-xl font-bold mb-4 text-cyber-blue flex items-center">
+                                <i class="fas fa-address-card mr-2"></i>
+                                Contact Info
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3 text-slate-300">
+                                    <i class="fas fa-envelope text-cyber-blue w-5"></i>
+                                    <span>san.ratana@example.com</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-slate-300">
+                                    <i class="fas fa-phone text-cyber-blue w-5"></i>
+                                    <span>+1 (555) 123-4567</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-slate-300">
+                                    <i class="fas fa-map-marker-alt text-cyber-blue w-5"></i>
+                                    <span>San Francisco, CA</span>
+                                </div>
+                                <div class="flex items-center space-x-3 text-slate-300">
+                                    <i class="fas fa-globe text-cyber-blue w-5"></i>
+                                    <span>sanratana.dev</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Details -->
+                        <div class="glass rounded-2xl p-6 hover-glow">
+                            <h3 class="text-xl font-bold mb-4 text-cyber-blue flex items-center">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Personal Details
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Age:</span>
+                                    <span class="text-slate-300">28 years</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Experience:</span>
+                                    <span class="text-slate-300">5+ years</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Specialization:</span>
+                                    <span class="text-slate-300">Network Security</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Languages:</span>
+                                    <span class="text-slate-300">English, Khmer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Core Competencies -->
+                    <div class="glass rounded-2xl p-8 hover-glow">
+                        <h3 class="text-2xl font-bold mb-6 text-cyber-blue flex items-center">
+                            <i class="fas fa-cogs mr-3"></i>
+                            Core Competencies
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-network-wired text-cyber-blue"></i>
+                                    <span>Enterprise Network Design & Implementation</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-shield-alt text-cyber-blue"></i>
+                                    <span>Network Security & Threat Mitigation</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-route text-cyber-blue"></i>
+                                    <span>Routing Protocols (OSPF, BGP, EIGRP)</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-fire text-cyber-blue"></i>
+                                    <span>Firewall Configuration & Management</span>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-cloud text-cyber-blue"></i>
+                                    <span>Cloud Networking (AWS, Azure, GCP)</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-key text-cyber-blue"></i>
+                                    <span>VPN & Remote Access Solutions</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-chart-line text-cyber-blue"></i>
+                                    <span>Network Monitoring & Performance Tuning</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-code text-cyber-blue"></i>
+                                    <span>Network Automation & Scripting</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Education & Background -->
+                    <div class="glass rounded-2xl p-8 hover-glow">
+                        <h3 class="text-2xl font-bold mb-6 text-cyber-blue flex items-center">
+                            <i class="fas fa-graduation-cap mr-3"></i>
+                            Education & Background
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="border-l-2 border-cyber-blue pl-6">
+                                <h4 class="text-lg font-semibold text-white">Bachelor of Science in Computer Networks</h4>
+                                <p class="text-cyber-blue font-medium">University of California, San Francisco</p>
+                                <p class="text-slate-400 text-sm">2016 - 2020 | GPA: 3.8/4.0</p>
+                                <p class="text-slate-300 mt-2">Specialized in network protocols, cybersecurity, and distributed systems.</p>
+                            </div>
+                            <div class="border-l-2 border-cyber-purple pl-6">
+                                <h4 class="text-lg font-semibold text-white">Network Engineering Bootcamp</h4>
+                                <p class="text-cyber-purple font-medium">Cisco Networking Academy</p>
+                                <p class="text-slate-400 text-sm">2020 | Intensive 6-month program</p>
+                                <p class="text-slate-300 mt-2">Advanced training in Cisco technologies, routing, switching, and network security.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interests & Hobbies -->
+                    <div class="glass rounded-2xl p-6 hover-glow">
+                        <h3 class="text-xl font-bold mb-4 text-cyber-blue flex items-center">
+                            <i class="fas fa-heart mr-2"></i>
+                            Interests & Hobbies
+                        </h3>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="bg-cyber-blue bg-opacity-20 text-cyber-blue px-4 py-2 rounded-full text-sm flex items-center">
+                                <i class="fas fa-laptop-code mr-2"></i>
+                                Open Source Projects
+                            </span>
+                            <span class="bg-cyber-purple bg-opacity-20 text-cyber-purple px-4 py-2 rounded-full text-sm flex items-center">
+                                <i class="fas fa-gamepad mr-2"></i>
+                                Cybersecurity CTFs
+                            </span>
+                            <span class="bg-green-500 bg-opacity-20 text-green-400 px-4 py-2 rounded-full text-sm flex items-center">
+                                <i class="fas fa-hiking mr-2"></i>
+                                Hiking & Photography
+                            </span>
+                            <span class="bg-yellow-500 bg-opacity-20 text-yellow-400 px-4 py-2 rounded-full text-sm flex items-center">
+                                <i class="fas fa-book mr-2"></i>
+                                Tech Blogging
+                            </span>
+                            <span class="bg-red-500 bg-opacity-20 text-red-400 px-4 py-2 rounded-full text-sm flex items-center">
+                                <i class="fas fa-users mr-2"></i>
+                                Tech Meetups
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section with Vanta.js Background -->
+    <section id="skills" class="py-20 px-6 relative">
+        <!-- Vanta.js Background -->
+        <div id="vanta-skills" class="vanta-bg opacity-20"></div>
+        
+        <div class="container mx-auto max-w-6xl content-overlay">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+                Technical <span class="text-cyber-blue">Skills</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Routing Protocols -->
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-route text-cyber-blue text-2xl mr-3"></i>
+                        <h3 class="text-xl font-bold">Routing Protocols</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>OSPF</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-cyber-blue h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>BGP</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-cyber-blue h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>EIGRP</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-cyber-blue h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-shield-alt text-cyber-blue text-2xl mr-3"></i>
+                        <h3 class="text-xl font-bold">Security</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Firewalls</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-cyber-purple h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>VPN</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-cyber-purple h-2 rounded-full" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>IDS/IPS</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-cyber-purple h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monitoring -->
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-chart-line text-cyber-blue text-2xl mr-3"></i>
+                        <h3 class="text-xl font-bold">Monitoring</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Wireshark</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>SNMP</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Nagios</span>
+                                <span>78%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-green-500 h-2 rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operating Systems -->
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-desktop text-cyber-blue text-2xl mr-3"></i>
+                        <h3 class="text-xl font-bold">Operating Systems</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Linux</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-yellow-500 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Windows Server</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-yellow-500 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Cisco IOS</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-yellow-500 h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Virtualization -->
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-server text-cyber-blue text-2xl mr-3"></i>
+                        <h3 class="text-xl font-bold">Virtualization</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>VMware</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-red-500 h-2 rounded-full" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Docker</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-red-500 h-2 rounded-full" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>GNS3</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-red-500 h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cloud -->
+                <div class="glass rounded-xl p-6 hover-glow">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-cloud text-cyber-blue text-2xl mr-3"></i>
+                        <h3 class="text-xl font-bold">Cloud Platforms</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>AWS</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-orange-500 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>Azure</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-orange-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="flex justify-between mb-1">
+                                <span>GCP</span>
+                                <span>70%</span>
+                            </div>
+                            <div class="bg-slate-700 rounded-full h-2">
+                                <div class="progress-bar bg-orange-500 h-2 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 px-6">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+                Projects & <span class="text-cyber-blue">Labs</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1 -->
+                <div class="glass rounded-xl overflow-hidden hover-glow cursor-pointer project-card">
+                    <div class="h-48 bg-gradient-to-br from-cyber-blue to-cyber-purple flex items-center justify-center">
+                        <i class="fas fa-network-wired text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Enterprise VLAN Setup</h3>
+                        <p class="text-slate-300 mb-4">Designed and implemented a multi-VLAN network infrastructure for a 500+ employee organization with segmented security zones.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-cyber-blue bg-opacity-20 text-cyber-blue px-3 py-1 rounded-full text-sm">VLAN</span>
+                            <span class="bg-cyber-blue bg-opacity-20 text-cyber-blue px-3 py-1 rounded-full text-sm">Cisco</span>
+                            <span class="bg-cyber-blue bg-opacity-20 text-cyber-blue px-3 py-1 rounded-full text-sm">STP</span>
+                        </div>
+                        <button class="text-cyber-blue hover:underline">View Details →</button>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="glass rounded-xl overflow-hidden hover-glow cursor-pointer project-card">
+                    <div class="h-48 bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Firewall Policy Simulation</h3>
+                        <p class="text-slate-300 mb-4">Created comprehensive firewall rules and policies using pfSense to secure network perimeter and internal segments.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-red-500 bg-opacity-20 text-red-400 px-3 py-1 rounded-full text-sm">pfSense</span>
+                            <span class="bg-red-500 bg-opacity-20 text-red-400 px-3 py-1 rounded-full text-sm">Security</span>
+                            <span class="bg-red-500 bg-opacity-20 text-red-400 px-3 py-1 rounded-full text-sm">NAT</span>
+                        </div>
+                        <button class="text-cyber-blue hover:underline">View Details →</button>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="glass rounded-xl overflow-hidden hover-glow cursor-pointer project-card">
+                    <div class="h-48 bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center">
+                        <i class="fas fa-key text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Site-to-Site VPN</h3>
+                        <p class="text-slate-300 mb-4">Established secure IPSec VPN tunnels connecting multiple remote offices with centralized headquarters.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-green-500 bg-opacity-20 text-green-400 px-3 py-1 rounded-full text-sm">IPSec</span>
+                            <span class="bg-green-500 bg-opacity-20 text-green-400 px-3 py-1 rounded-full text-sm">VPN</span>
+                            <span class="bg-green-500 bg-opacity-20 text-green-400 px-3 py-1 rounded-full text-sm">Encryption</span>
+                        </div>
+                        <button class="text-cyber-blue hover:underline">View Details →</button>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="glass rounded-xl overflow-hidden hover-glow cursor-pointer project-card">
+                    <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Network Monitoring Dashboard</h3>
+                        <p class="text-slate-300 mb-4">Built real-time network monitoring solution using SNMP and custom dashboards for proactive network management.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full text-sm">SNMP</span>
+                            <span class="bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full text-sm">Grafana</span>
+                            <span class="bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full text-sm">Monitoring</span>
+                        </div>
+                        <button class="text-cyber-blue hover:underline">View Details →</button>
+                    </div>
+                </div>
+
+                <!-- Project 5 -->
+                <div class="glass rounded-xl overflow-hidden hover-glow cursor-pointer project-card">
+                    <div class="h-48 bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
+                        <i class="fas fa-cloud text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Hybrid Cloud Network</h3>
+                        <p class="text-slate-300 mb-4">Designed hybrid cloud architecture connecting on-premises infrastructure with AWS VPC using Direct Connect.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-yellow-500 bg-opacity-20 text-yellow-400 px-3 py-1 rounded-full text-sm">AWS</span>
+                            <span class="bg-yellow-500 bg-opacity-20 text-yellow-400 px-3 py-1 rounded-full text-sm">VPC</span>
+                            <span class="bg-yellow-500 bg-opacity-20 text-yellow-400 px-3 py-1 rounded-full text-sm">Hybrid</span>
+                        </div>
+                        <button class="text-cyber-blue hover:underline">View Details →</button>
+                    </div>
+                </div>
+
+                <!-- Project 6 -->
+                <div class="glass rounded-xl overflow-hidden hover-glow cursor-pointer project-card">
+                    <div class="h-48 bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center">
+                        <i class="fas fa-cogs text-6xl text-white"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Network Automation</h3>
+                        <p class="text-slate-300 mb-4">Automated network configuration and deployment using Python scripts and Ansible playbooks for Cisco devices.</p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="bg-indigo-500 bg-opacity-20 text-indigo-400 px-3 py-1 rounded-full text-sm">Python</span>
+                            <span class="bg-indigo-500 bg-opacity-20 text-indigo-400 px-3 py-1 rounded-full text-sm">Ansible</span>
+                            <span class="bg-indigo-500 bg-opacity-20 text-indigo-400 px-3 py-1 rounded-full text-sm">Automation</span>
+                        </div>
+                        <button class="text-cyber-blue hover:underline">View Details →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 relative">
+        <!-- Vanta.js Background -->
+        <div id="vanta-contact" class="vanta-bg opacity-10"></div>
+        
+        <div class="container mx-auto max-w-4xl content-overlay">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+                Get In <span class="text-cyber-blue">Touch</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Contact Info -->
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6 text-cyber-blue">Let's Connect</h3>
+                        <p class="text-slate-300 text-lg leading-relaxed">
+                            Ready to discuss network solutions, collaboration opportunities, or just want to connect with a fellow engineer? I'd love to hear from you!
+                        </p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <a href="mailto:san.ratana@example.com" class="flex items-center space-x-4 text-slate-300 hover:text-cyber-blue transition-colors duration-300">
+                            <i class="fas fa-envelope text-2xl"></i>
+                            <span>san.ratana@example.com</span>
+                        </a>
+                        <a href="https://linkedin.com/in/sanratana" class="flex items-center space-x-4 text-slate-300 hover:text-cyber-blue transition-colors duration-300">
+                            <i class="fab fa-linkedin text-2xl"></i>
+                            <span>linkedin.com/in/sanratana</span>
+                        </a>
+                        <a href="https://github.com/sanratana" class="flex items-center space-x-4 text-slate-300 hover:text-cyber-blue transition-colors duration-300">
+                            <i class="fab fa-github text-2xl"></i>
+                            <span>github.com/sanratana</span>
+                        </a>
+                        <a href="https://t.me/sanratana" class="flex items-center space-x-4 text-slate-300 hover:text-cyber-blue transition-colors duration-300">
+                            <i class="fab fa-telegram text-2xl"></i>
+                            <span>@sanratana</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="glass rounded-xl p-8">
+                    <form id="contact-form" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium mb-2">Name</label>
+                            <input type="text" id="name" name="name" required class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:border-cyber-blue focus:outline-none transition-colors duration-300">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium mb-2">Email</label>
+                            <input type="email" id="email" name="email" required class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:border-cyber-blue focus:outline-none transition-colors duration-300">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" required class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:border-cyber-blue focus:outline-none transition-colors duration-300 resize-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-cyber-blue text-dark-bg py-3 rounded-lg font-semibold hover:bg-opacity-80 transition-all duration-300 hover-glow">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-slate-800">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="text-2xl font-bold text-cyber-blue mb-2">San Ratana</div>
+                    <p class="text-slate-400">Network Engineer & Infrastructure Specialist</p>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <a href="https://linkedin.com/in/sanratana" class="text-slate-400 hover:text-cyber-blue transition-colors duration-300">
+                        <i class="fab fa-linkedin text-2xl"></i>
+                    </a>
+                    <a href="https://github.com/sanratana" class="text-slate-400 hover:text-cyber-blue transition-colors duration-300">
+                        <i class="fab fa-github text-2xl"></i>
+                    </a>
+                    <a href="https://t.me/sanratana" class="text-slate-400 hover:text-cyber-blue transition-colors duration-300">
+                        <i class="fab fa-telegram text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-slate-800 text-center">
+                <p class="text-slate-400">
+                    © 2024 San Ratana. All rights reserved.
+                </p>
+                <div class="mt-4 text-cyber-blue font-mono">
+                    <span id="terminal-text">$ ping sanratana.dev</span>
+                    <span class="animate-pulse">_</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top" class="fixed bottom-8 right-8 bg-cyber-blue text-dark-bg p-3 rounded-full shadow-lg hover-glow opacity-0 transition-all duration-300 z-50">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Vanta.js Effects
+        let vantaHero, vantaAbout, vantaSkills, vantaContact;
+
+        // Initialize Vanta.js effects after page load
+        window.addEventListener('load', function() {
+            // Hero Section - NET effect (perfect for networking theme)
+            vantaHero = VANTA.NET({
+                el: "#vanta-hero",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: 0x00d4ff,
+                backgroundColor: 0x0f172a,
+                points: 10.00,
+                maxDistance: 20.00,
+                spacing: 15.00
+            });
+
+            // About Section - BIRDS effect (dynamic and engaging)
+            vantaAbout = VANTA.BIRDS({
+                el: "#vanta-about",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                backgroundColor: 0x0f172a,
+                color1: 0x00d4ff,
+                color2: 0x8b5cf6,
+                colorMode: "varianceGradient",
+                birdSize: 1.20,
+                wingSpan: 25.00,
+                speedLimit: 4.00,
+                separation: 20.00,
+                alignment: 20.00,
+                cohesion: 20.00,
+                quantity: 3.00
+            });
+
+            // Skills Section - WAVES effect (flowing and technical)
+            vantaSkills = VANTA.WAVES({
+                el: "#vanta-skills",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: 0x0f172a,
+                shininess: 30.00,
+                waveHeight: 15.00,
+                waveSpeed: 1.00,
+                zoom: 0.75
+            });
+
+            // Contact Section - NET effect (subtle)
+            vantaContact = VANTA.NET({
+                el: "#vanta-contact",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: 0x8b5cf6,
+                backgroundColor: 0x0f172a,
+                points: 8.00,
+                maxDistance: 25.00,
+                spacing: 20.00
+            });
+
+            // Hide preloader after Vanta effects are loaded
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('preloader').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // Clean up Vanta effects on page unload
+        window.addEventListener('beforeunload', function() {
+            if (vantaHero) vantaHero.destroy();
+            if (vantaAbout) vantaAbout.destroy();
+            if (vantaSkills) vantaSkills.destroy();
+            if (vantaContact) vantaContact.destroy();
+        });
+
+        // Typing Animation
+        const typingText = document.getElementById('typing-text');
+        const phrases = [
+            'Software Developer',
+            'Backend Specialist',
+            'Frontend Developer',
+            'Infrastructure Architect'
+        ];
+        
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        
+        function typeWriter() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                typingText.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingText.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+            
+            let typeSpeed = isDeleting ? 50 : 100;
+            
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+            
+            setTimeout(typeWriter, typeSpeed);
+        }
+        
+        typeWriter();
+
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('-translate-x-full');
+        });
+        
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('-translate-x-full');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Active navigation highlighting
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('text-cyber-blue');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('text-cyber-blue');
+                }
+            });
+        });
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scroll-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.style.opacity = '1';
+            } else {
+                scrollTopBtn.style.opacity = '0';
+            }
+        });
+        
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Contact form
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form submission
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                submitBtn.textContent = 'Message Sent!';
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    this.reset();
+                }, 2000);
+            }, 1000);
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements for animation
+        document.querySelectorAll('.glass, .project-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Terminal animation in footer
+        const terminalText = document.getElementById('terminal-text');
+        const terminalCommands = [
+            '$ ping sanratana.dev',
+            '$ traceroute sanratana.dev',
+            '$ nslookup sanratana.dev',
+            '$ ssh sanratana@network.local'
+        ];
+        
+        let terminalIndex = 0;
+        
+        setInterval(() => {
+            terminalText.textContent = terminalCommands[terminalIndex];
+            terminalIndex = (terminalIndex + 1) % terminalCommands.length;
+        }, 3000);
+    </script>
+</body>
+</html>
